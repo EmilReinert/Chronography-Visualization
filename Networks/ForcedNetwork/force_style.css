@@ -1,0 +1,35 @@
+.controls {
+    flex-basis: 200px;
+    padding: 0 5px;
+}
+
+.controls .force {
+        background-color: #eee;
+        border-radius: 3px;
+        padding: 5px;
+        margin: 5px 0;
+    }
+
+/*OBEN EGAL ERST MAL*/
+
+body {
+    display:inline;
+}
+canvas{
+    
+}
+#infobox {
+    background-color: lightgrey;
+}
+
+#networkTitle {
+    position: absolute;
+    top: 200px;
+    left: 30px;
+    width: 100%;
+}
+
+#text1 {
+    height: 200px;
+    overflow: auto;
+}

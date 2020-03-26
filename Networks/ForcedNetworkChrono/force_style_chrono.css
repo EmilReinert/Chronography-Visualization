@@ -1,0 +1,90 @@
+body {
+    font-size: 1em !important;
+    color: #000 !important;
+    font-family: Arial !important;
+}
+
+canvas {
+}
+
+
+
+.controls {
+    width: 1200px;
+    background-color: #eee;
+}
+
+form {
+    margin-top:10px;
+}
+/*INFOBOX*/
+#infotitle {
+    display: none;
+}
+
+#infobox {
+    width: 1200px;
+    left: 50%;
+    font-weight: bold;
+    font-size: small;
+    border-radius: 100px;
+}
+
+    #infobox img {
+        width: 200px;
+        height: 200px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        position: relative;
+        overflow: hidden;
+    }
+
+#abb {
+    border-radius: 50%;
+}
+
+    #abb:hover {
+        border-radius: 0;
+    }
+
+#text1 {
+    font-weight: normal;
+    height: 200px;
+    overflow: auto;
+}
+
+#subtitles {
+    font-weight: bold;
+}
+
+    #subtitles button {
+        font-weight: normal;
+        background: none !important;
+        border: none;
+        /*optional*/
+        font-family: arial, sans-serif;
+        /*input has OS specific font-family*/
+        cursor: pointer;
+    }
+
+        #subtitles button:hover {
+            text-decoration: underline;
+        }
+
+
+/*OTHER*/
+#networkTitle {
+    position: absolute;
+    top: 300px;
+    left: 30px;
+    width: 100%;
+}
+
+
+/*TESTS*/
+.tooltip:hover span {
+    display: block;
+    position: fixed;
+    overflow: hidden;
+}

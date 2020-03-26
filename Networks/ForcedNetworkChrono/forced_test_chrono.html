@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Test Forced Network with Chronography Test Data</title>
+    <link rel="stylesheet" type="text/css" href="force_style_chrono.css" />
+</head>
+<body>
+    <h1>
+        Test Forced Network with Chronography Test Data
+    </h1>
+    <div>
+        <p>Test Funktions</p>
+        <label>
+            Color
+            <output id="center_XSliderOutput">0.5</output>
+            <input type="range" min="0" max="1" value=".5" step="0.01" oninput="d3.select('#center_XSliderOutput').text(value); testcolor = d3.interpolateSpectral(value); update();">
+        </label>
+        <label>
+            <button type="button" onclick="if (drawImages) drawImages = false; else drawImages = true;   update(); ">
+                Draw Images
+            </button>
+        </label>
+        <label>
+            <button type="button" onclick="if (drawNames) drawNames = false; else drawNames = true;   update(); ">
+                Draw Names
+            </button>
+        </label>
+    </div>
+
+    <div class=" controls">
+        <p>Links</p>
+
+        <table id="links">
+            <tr>
+                <td>
+                    <label><input type="checkbox" onchange="if (S) S = false; else S = true; loadLinks(); "> Standort </label>
+                </td>
+                <td>
+                    <label><input type="checkbox" onchange="if (L) L = false; else L = true; loadLinks(); "> Land </label>
+                </td>
+                <td>
+                    <label><input type="checkbox" onchange="if (A) A = false; else A = true; loadLinks(); "> ArchitektInn(Nachname) </label>
+                </td>
+                <td>
+                    <label><input type="checkbox" onchange="if (K) K = false; else K = true; loadLinks(); "> Künstler </label>
+                </td>
+                <td>
+                    <label><input type="checkbox" onchange="if (JE) JE = false; else JE = true; loadLinks(); "> Entwurfsjahr </label>
+                </td>
+                <td>
+                    <label><input type="checkbox" onchange="if (JF) JF = false; else JF = true; loadLinks(); "> Fertigstellungsjahr </label>
+                </td>
+
+            </tr>
+        </table>
+
+
+    </div>
+
+    <form onsubmit="loadSearchNodes(document.getElementById('search_nodes').value); return false;">
+        <input id="search_nodes">
+        <input type="submit" value="Search">
+    </form>
+
+
+    <canvas id="network" width="1200" height="600"></canvas>
+    <div id="infotitle" title="Specific information for selected item listed below">Information</div>
+
+    <table id="infobox">
+        <tr>
+            <td>
+                <img id="abb" src="../../Data/Images/blue.jpg" width="200" height="200" />
+            </td>
+            <td>
+                <img id="gru" src="../../Data/Images/blue.jpg" width="200" height="200" />
+            </td>
+            <td>
+                <div id="infoname">
+                    Default Name
+                </div>
+            </td>
+            <td>
+                <p id="text1">
+                    default
+                </p>
+            </td>
+            <td id="subtitles">
+                Standort
+                <div>
+                    <button id="S" onclick=" loadHighlightLinks(info_s, 'Standort' ); ">
+                        default
+                    </button>
+                </div>
+                Land
+                <div>
+                    <button id="L" onclick=" loadHighlightLinks(info_l, 'Land' ); ">
+                        default
+                    </button>
+                </div>
+
+                ArchitektInn(Nachname)
+                <div>
+                    <button id="A" onclick=" loadHighlightLinks(info_a, 'A1Nachname' ); ">
+                        default
+                    </button>
+                </div>
+
+                Künstler
+                <div>
+                    <button id="K" onclick=" loadHighlightLinks(info_k, 'K1' ); ">
+                        default
+                    </button>
+                </div>
+
+                Entwurfsjahr
+                <div>
+                    <button id="JE" onclick=" loadHighlightLinks(info_je, 'JahrEntwurf' ); ">
+                        default
+                    </button>
+                </div>
+
+                Fertigstellungsjahr
+                <div>
+                    <button id="JF" onclick=" loadHighlightLinks(info_jf, 'JahrFertigstellung' ); ">
+                        default
+                    </button>
+                </div>
+
+            </td>
+        </tr>
+    </table>
+    <div id="networkTitle">
+        Forced Network Nodes
+    </div>
+
+    <!--a href="" FOLDER="https://webspeicher.in.uni-weimar.de/fs/home/m/s/xinu3159/">Emil's Verzeichnis</a-->
+    <!-- DATA-->
+    <script type="text/javascript" src="../../Data/TableData/chronodata.json"></script>
+    <script src="https://d3js.org/d3.v5.min.js">
+    </script>
+    <script src="chrono_draw.js"></script>
+    <script src="chrono_helpers.js"></script>
+    <script src="chrono.js"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Test Forced Network</title>
+    <link rel="stylesheet" type="text/css" href="force_style.css" />
+</head>
+<body>
+    <h1>
+        Forced Network Test
+    </h1>
+    <div class=" controls">
+        <div class="force">
+            <p>Interactive Funktions</p>
+            <!--
+            <label>
+                Color
+                <output id="center_XSliderOutput">0.5</output>
+                <input type="range" min="0" max="1" value=".5" step="0.01" oninput="d3.select('#center_XSliderOutput').text(value); testcolor = d3.interpolateSpectral(value); update();">
+            </label>
+            -->
+            <label>
+                Draw Images?
+                <button type="button" onclick="impulse();if (drawImages) drawImages = false; else drawImages = true;   update(); ">
+                    Draw
+                </button>
+            </label>
+        </div>
+    </div>
+
+    <canvas id="network" width="500" height="250"></canvas>
+
+
+    <table id="infobox">
+        <tr>
+            <td>
+                <div id="info">
+                    Default Name?
+                </div>
+            </td>
+
+            <td>
+                <img class="photo" src="../../Data/Images/blue.jpg" width="100" height="100" />
+            </td>
+            <td>
+                <img class="photo" src="../../Data/Images/blue.jpg" width="100" height="100" />
+            </td>
+            <td>
+                <p id="text1">
+                    As you can see, once there's enough text in this box, the box will grow scroll bars... that's why we call it a scroll box! You could also place an image into the scroll box.
+                    As you can see, once there's enough text in this box, the box will grow scroll bars... that's why we call it a scroll box! You could also place an image into the scroll box.
+                    As you can see, once there's enough text in this box, the box will grow scroll bars... that's why we call it a scroll box! You could also place an image into the scroll box.
+                    As you can see, once there's enough text in this box, the box will grow scroll bars... that's why we call it a scroll box! You could also place an image into the scroll box.
+                    As you can see, once there's enough text in this box, the box will grow scroll bars... that's why we call it a scroll box! You could also place an image into the scroll box.
+                </p>
+            </td>
+            <td>
+                <img class="photo" src="../../Data/Images/blue.jpg" width="100" height="100" />
+            </td>
+        </tr>
+    </table>
+    <div id="networkTitle">
+        Forced Network Nodes
+    </div>
+
+
+
+    <script type="text/javascript" src="../../Data/TableData/testnames.txt"></script> <!-- DATA-->
+
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="force.js"></script>
+
+
+</body>
+
+</html>
