@@ -54,34 +54,35 @@ function drawText(c,x,y,text) {
 
 //////////// for canvas
 
-function drawNodeImage(d, i) {
+function drawNode(d, color, radius =r) {
     //drawing iterated abbildung
 
-    ctx.drawImage(nodeImages[i], d.x - r * 2, d.y - r * 2, 4 * r, 4 * r);
+    drawHighlight(d, color,radius);
+    drawNodeImageRound(d,radius);
 
-    ctx.moveTo(d.x, d.y);
 }
 
-function drawPin(d, color, x = d.x, y = d.y) {
+function drawPin(d, color) {
     var e = r*1.1 * Math.sqrt(2) / 2; // distance of radius vector
     ctx.beginPath();
     ctx.fillStyle = color;
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + e, y + e);
-    ctx.lineTo(x, y + 2 * e);
-    ctx.lineTo(x - e, y + e);
+    ctx.moveTo(d.x, d.y);
+    ctx.lineTo(d.x + e, d.y + e);
+    ctx.lineTo(d.x, d.y + 2 * e);
+    ctx.lineTo(d.x - e, d.y + e);
     ctx.fill();
     drawHighlight(d, color);
+    drawNodeImageRound(d);
 }
 
-function drawHighlight(d, color, x= d.x, y = d.y) {
+function drawHighlight(d, color, radius =r) {
     // draws circle with bigger radius 
     // if drawn before actual conent we have a cicular highlight
     ctx.beginPath();
     ctx.fillStyle = color;
     ctx.globalAlpha = 1;
-    ctx.moveTo(x, y);
-    ctx.arc(x, y, d.r * 1.1, 0, 2 * Math.PI);
+    ctx.moveTo(d.x, d.y);
+    ctx.arc(d.x, d.y, radius * 1.1, 0, 2 * Math.PI);
     ctx.fill();
 }
 
@@ -92,19 +93,19 @@ function drawSideName(d, color) {
 
 
 
-function drawNodeImageRound(d, i,x=d.x,y=d.y) {
+function drawNodeImageRound(d, radius =r,) {
     // draws circle image
 
     ctx.save();
     ctx.beginPath();
-    ctx.arc(x, y, d.r, 0, Math.PI * 2, true);
+    ctx.arc(d.x, d.y, radius, 0, Math.PI * 2, true);
     ctx.closePath();
     ctx.clip();
     
-    ctx.drawImage(nodeImages[i], x - d.r, y - d.r, 2 * d.r, 2 * d.r);
+    ctx.drawImage(nodeImages[parseInt(d.Nummer) - 1], d.x - radius, d.y - radius, 2 * radius, 2 * radius);
 
     ctx.beginPath();
-    ctx.arc(x, y, d.r, 0, Math.PI * 2, true);
+    ctx.arc(d.x, d.y, radius, 0, Math.PI * 2, true);
     ctx.clip();
     ctx.closePath();
     ctx.restore();
@@ -138,3 +139,95 @@ function drawTimeLine(c) {
 
 //// Animations 
 
+// simple text for linear moving animatino to lower right
+function myMove() {
+    var elem = document.getElementById("title");
+    var pos = 0;
+    var id = setInterval(frame, 10);
+    function frame() {
+        if (pos == 350) {
+            clearInterval(id);
+        } else {
+            pos++;
+            elem.style.top = pos + 'px';
+            elem.style.left = pos + 'px';
+        }
+    }
+}
+
+function openInfo() {
+    info_box.style.transform = "scaleY(0)";
+    var sY = 0;
+    var id = setInterval(frame, 10);
+    function frame() {
+        if (sY >=1) {
+            clearInterval(id);
+        } else {
+            info_box.style.transform = "scaleY(" + sY + ")";
+            sY += 0.1;
+        }
+    }
+}
+
+function slideInfo() {
+    // slide info box from current to clicknode position
+    info_box.style.display = "block";
+    if (click_node.y < 300)
+        endpos = 180 + click_node.y;
+    else
+        endpos = -200 + click_node.y;
+    var pos = parseInt(info_box.getBoundingClientRect().top, 10); // start position
+
+    if (mode == "time")
+        endpos = 450;
+    var fs = (endpos - pos) * 0.05;
+    if (fs < 1) {
+        info_box.style.top = endpos + "px"; return;
+    }
+    var id = setInterval(frame, 1);
+    function frame() {
+        if ((Math.sign(fs) == 1 && pos >= endpos) || (Math.sign(fs) == -1 && pos <= endpos)) {
+            clearInterval(id);
+            info_box.style.top = endpos+"px";
+        } else {
+            info_box.style.top = pos+"px";
+            pos = pos+fs;
+        }
+    }
+}
+
+function slideOutInfo() {
+    var pos = parseInt(info_box.getBoundingClientRect().top, 10);// start position
+    var endpos = 3 * height; 
+    var fs = (endpos - pos) * 0.05;
+    var id = setInterval(frame, 1);
+    function frame() {
+        if (pos >= endpos) {
+            clearInterval(id);
+            info_box.style.display = "none";
+        } else {
+            info_box.style.top = pos + "px";
+            pos = pos+fs;
+        }
+    }
+}
+
+function nodePop(d) {
+    if (click_node == null) { // unclick animation
+        update(); return;
+    }
+    //click animation
+    // radius from 1 to 1.5
+    var radius = 1;
+    var id = setInterval(frame, 10);
+    function frame() {
+        if (radius >= 1.5) {
+            clearInterval(id);
+            drawNode(d, highlightcolor, 1.5 * r)
+            update();
+        } else {
+            drawNode(d,highlightcolor, r*radius)
+            radius += 0.1;
+        }
+    }
+}

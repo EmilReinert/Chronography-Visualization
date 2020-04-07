@@ -167,8 +167,8 @@ function makeLink(t, s) {
 function getMouseCanvasPos() {
     // returns position of mouse relative in canvas
     c = [];
-    c.x = d3.mouse(document.getElementById("network"))[0];
-    c.y = d3.mouse(document.getElementById("network"))[1];
+    c.x = d3.mouse(network)[0];
+    c.y = d3.mouse(network)[1];
     return c;
 
 }

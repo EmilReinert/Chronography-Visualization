@@ -6,46 +6,10 @@
     <link rel="stylesheet" type="text/css" href="force_style_chrono.css" />
 </head>
 <body>
-    <h1>
+    <h1 id="title">
         Chronography
     </h1>
-    <div class=" controls">
 
-        <button type="button" onclick="changeMode('map');">
-            Map Mode
-        </button>
-        <button type="button" onclick="changeMode('network');">
-            Network Mode
-        </button>
-        <button type="button" onclick="changeMode('time');">
-            Timeline Mode
-        </button>
-        <table id="links">
-            <tr>
-                <td>
-                    <label><input type="checkbox" onchange="if (S) S = false; else S = true; loadLinks(); "> Standort </label>
-                </td>
-                <td>
-                    <label><input type="checkbox" onchange="if (L) L = false; else L = true; loadLinks(); "> Land </label>
-                </td>
-                <td>
-                    <label><input type="checkbox" onchange="if (A) A = false; else A = true; loadLinks(); "> ArchitektInn(Nachname) </label>
-                </td>
-                <td>
-                    <label><input type="checkbox" onchange="if (K) K = false; else K = true; loadLinks(); "> Künstler </label>
-                </td>
-                <td>
-                    <label><input type="checkbox" onchange="if (JE) JE = false; else JE = true; loadLinks(); "> Entwurfsjahr </label>
-                </td>
-                <td>
-                    <label><input type="checkbox" onchange="if (JF) JF = false; else JF = true; loadLinks(); "> Fertigstellungsjahr </label>
-                </td>
-
-            </tr>
-        </table>
-        <br />
-
-    </div>
     <!--div>
         <p>Test Funktions</p>
         <label>
@@ -73,8 +37,36 @@
     </form>
 
 
-    <canvas id="network" width="1200" height="600"></canvas>
-    <canvas id="timeline"  width="1200" height="50"></canvas>
+    <canvas id="network" width="120" height="60" style="cursor: pointer;"></canvas>
+    <canvas id="timeline" width="1200" height="50"></canvas>
+
+
+    <div id="tags">
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYvvvvvvZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYvvvvvvZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYZ</button>
+        <button class="tag"> tagXYZ</button>
+    </div>
 
     <div id="infotitle" title="Specific information for selected item listed below">Information</div>
 
@@ -140,6 +132,44 @@
             </td>
         </tr>
     </table>
+
+    <div class=" controls">
+
+        <button type="button" onclick="changeMode('map');">
+            Map Mode
+        </button>
+        <button type="button" onclick="changeMode('network');">
+            Network Mode
+        </button>
+        <button type="button" onclick="changeMode('time');">
+            Timeline Mode
+        </button>
+        <table id="links">
+            <tr>
+                <td>
+                    <label><input type="checkbox" onchange="if (S) S = false; else S = true; loadLinks(); "> Standort </label>
+                </td>
+                <td>
+                    <label><input type="checkbox" onchange="if (L) L = false; else L = true; loadLinks(); "> Land </label>
+                </td>
+                <td>
+                    <label><input type="checkbox" onchange="if (A) A = false; else A = true; loadLinks(); "> ArchitektInn(Nachname) </label>
+                </td>
+                <td>
+                    <label><input type="checkbox" onchange="if (K) K = false; else K = true; loadLinks(); "> Künstler </label>
+                </td>
+                <td>
+                    <label><input type="checkbox" onchange="if (JE) JE = false; else JE = true; loadLinks(); "> Entwurfsjahr </label>
+                </td>
+                <td>
+                    <label><input type="checkbox" onchange="if (JF) JF = false; else JF = true; loadLinks(); "> Fertigstellungsjahr </label>
+                </td>
+
+            </tr>
+        </table>
+        <br />
+
+    </div>
 
     <!--a href="" FOLDER="https://webspeicher.in.uni-weimar.de/fs/home/m/s/xinu3159/">Emil's Verzeichnis</a-->
     <!-- DATA-->

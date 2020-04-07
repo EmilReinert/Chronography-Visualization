@@ -2,23 +2,48 @@ body {
     font-size: 1em !important;
     color: #000 !important;
     font-family: Arial !important;
+    overflow:hidden;
 }
-h1{
-    margin-left: 0px;
+h1 {
+    padding: 2px;
+    padding-left: 10px;
+    color: white;
+    background-color: #86d1b7;
+    border-radius: 10px;
 }
+#searchbar {
+    padding: 2px;
+    position: absolute;
+    top: 30px;
+    right: 30px;
+}
+
+    #searchbar input{
+        border-style: solid;
+        border-color:white;
+    }
+
+    #searchbar #search_nodes {
+    }
+
 canvas {
-    margin-left: 20px;
+    margin: auto;
+    position: absolute;
+    top: 10%;
+    left: 0;
+    bottom: 0;
+    right: 0;
 }
 
 
 
 .controls {
-    width: 1200px;
     background: none;/* #dbdbdb;*/
 }
 
-.controls button{
-    position: center;
+.controls {
+    position:absolute;
+    bottom: 10px;
 }
 #links{
     display:none;
@@ -27,17 +52,32 @@ canvas {
 form {
     margin-top:0px;
 }
+/*TAGS*/
+#tags {
+    text-align:center;
+    margin-top:-20px;
+}
+.tag {
+    width: 10px;
+    font-weight: bold;
+    color: grey;
+    background: none !important;
+    border: none;
+    transform: rotate(45deg);
+}
+
 /*INFOBOX*/
 #infotitle {
     display: none;
 }
 
 #infobox {
-    top: 50px;
-    position: absolute;
-    background-color:rgba(107, 107, 107, 0.89); /*#86d1b7;*/
+    position:absolute;
+    top:1000px;
+    left:10%;
+    background-color: rgba(107, 107, 107, 0.89); /*#86d1b7;*/
     display: none;
-    width: 1200px;
+    width:80%;
     font-weight: bold;
     font-size: small;
     border-radius: 100px;
@@ -90,11 +130,6 @@ form {
 
 
 /*OTHER*/
-#searchbar{
-    position: absolute;
-    top: 140px;
-    left: 20px;
-}
 
 
 /*TESTS*/

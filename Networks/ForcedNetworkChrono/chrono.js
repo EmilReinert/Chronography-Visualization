@@ -16,8 +16,12 @@ var info_name = document.getElementById("infoname"),
 var info_abb = document.getElementById("abb"),
     info_gru = document.getElementById("gru");
 
-var canvas = d3.select("#network"); // D3 activated canvas = SVG
+var network = document.getElementById("network"); //HTML canvas
 var timeline = document.getElementById("timeline");
+network.width = window.innerWidth;
+network.height = window.innerHeight;
+timeline.width = window.innerWidth;
+var canvas = d3.select("#network"); // D3 activated canvas = SVG
 var infoItems = document.getElementById("infobox").rows.item(0).cells;
 
 // Derived VARIABLES
@@ -38,7 +42,7 @@ var center_force = 180;
 var collisionFactor = 1.2;
 var color = d3.scaleOrdinal(d3.schemeCategory10);
 var testImage = makeImage("../../Data/Images/blue.jpg", 100, 100, "na");
-var mapImage = makeImage("../../Data/Images/map.png", 1200,600, "map");
+var mapImage = makeImage("../../Data/Images/map.png", 120,60, "map");
 var positions = { "upleft": { "x": 300, "y": 150 }, "upright": { "x": 900, "y": 150 }, "lowleft": { "x": 300, "y": 450 }, "lowright": { "x": 900, "y": 450 } }; // testpositions
 
 var map = {
@@ -112,7 +116,7 @@ var simulation = d3.forceSimulation()
         .strength(-center_force))   
     .force("forceY", d3.forceY() // force for horizontal gravity to center
         .strength(0.1)
-        .y(height * 0.5))
+        .y(height * 0.4))
     .force("link", d3.forceLink()
         .id(function (d) { return d.Nummer; }));
 
@@ -134,7 +138,11 @@ canvas // = SVG
     .on("click", clicked)
     .on('mousemove', function () { // HOVER!!!
         //hovered();
-    }); 
+    })
+    .on("wheel", function (d) {
+        var direction = d3.event.deltaY < 0 ? 'down' : 'up'; //down = zoomin
+        console.log(direction); 
+    });
 
 changeMode("map");
 
@@ -146,6 +154,7 @@ function changeMode(m) {
     document.getElementById("network").height = height =600;
 
     if (mode == "network") {
+        r = 20;
         if (previous == "map")
             impulse(0.2);
         else
@@ -157,6 +166,7 @@ function changeMode(m) {
                 .strength(-center_force));
     }
     if (mode == "map") {
+        r = 10;
         simulation.stop();
         simulation
             .force("collide", d3.forceCollide(0))
@@ -167,13 +177,14 @@ function changeMode(m) {
         setTimeout(function () { update(); }, 100);
     }
     if (mode == "time") {
+        r = 20;
         simulation.stop();
         simulation
             .force("collide", d3.forceCollide(0))
             .force("charge", d3.forceManyBody()// forces between nodes
                 .strength(0));
         forcing = false;
-        initTime();
+        initTimeline();
     }
     update();
 }
@@ -185,13 +196,13 @@ function initMap() {
     for (i = 0; i < table_length; i++) {
         if (map[chrono_data.items[i].Land] == undefined) pos.x = pos.y = 0;
         else pos = map[chrono_data.items[i].Land];
-        chrono_data.items[i].x = pos.x;// + i * 0.1 * Math.random();
-        chrono_data.items[i].y = pos.y - 1.7 * r;//+ i * 0.1 * Math.random();
+        chrono_data.items[i].x = 1.28*pos.x;// + i * 0.1 * Math.random();
+        chrono_data.items[i].y = 1*pos.y - 1.7 * r;//+ i * 0.1 * Math.random();
     }
 
 }
 
-function initTime() {
+function initTimeline() {
     // initializing time mode
     document.getElementById("network").height = 300; height = 300;
     timeline.style.display = "block";
@@ -203,7 +214,7 @@ function initTime() {
         else 
             pos = offset + (step / 10) * (parseInt(chrono_data.items[i].JahrFertigstellung) - start);
         chrono_data.items[i].x = pos; //+  0.1 * Math.random();
-        chrono_data.items[i].y = height - 1.7 * r;
+        chrono_data.items[i].y = height*0.42 - 1.7 * r;
         
     }
 
@@ -212,10 +223,22 @@ function initTime() {
 
 // UPDATE
 function update() {
-    // Style
+    // catch out of bounds nodes
+    for (i = 0; i < table_length; i++) {
+        if (chrono_data.items[i].x < 0 + r)
+            chrono_data.items[i].x = 0 + r;
+        if (chrono_data.items[i].x > width - r)
+            chrono_data.items[i].x = width - r;
+        if (chrono_data.items[i].y < 0 + r)
+            chrono_data.items[i].y = 0 + r;
+        if (chrono_data.items[i].y > height - r)
+            chrono_data.items[i].y = height - r;
+    }
+
+    // drawing Modes
     if (mode == "network") {
         ctx.clearRect(0, 0, width, height);
-        updateView(drawHighlight, testcolor);
+        updateView(drawNode, testcolor);
     }
     if (mode == "map") {
         ctx.drawImage(mapImage, 0, 0, width, height);
@@ -239,27 +262,21 @@ function updateView(f, color) {
 
 
     for (i = 0; i < table_length; i++) {
+        if (chrono_data.items[i] == click_node) { continue;}
         if (search_nodes.includes(chrono_data.items[i].Nummer))
             f(chrono_data.items[i], highlightcolor); // highlight selected nodes
         else
             f(chrono_data.items[i], color);
-        drawNodeImageRound(chrono_data.items[i], i);//DRAWING IMAGE NODES
+       //DRAWING IMAGE NODES
         
-    }
-
-    // draw hover node with side info
-    if (hover_node != null) {
-        drawSideName(hover_node, color);
-        f(hover_node, color);
-        drawNodeImageRound(hover_node, parseInt(hover_node.Nummer) - 1);
     }
 
     // draw click node last
     if (click_node != null) {
-        drawHighlight(click_node, highlightcolor);
-        drawNodeImageRound(click_node, parseInt(click_node.Nummer)-1);//DRAWING IMAGE NODES
+        drawHighlight(click_node, highlightcolor, 1.5 * r);
+        drawNodeImageRound(click_node, 1.5 * r);//DRAWING IMAGE NODES
     }
-    loadInfo();
+    //loadInfo();
 }
 
 
@@ -267,16 +284,14 @@ function updateView(f, color) {
 
 function clicked() {
     // consists of animations and transitions
+    simulation.stop();
     resetRadiuses();
     resetClickLinks();
     // Click node Action and Info
     // only if it is defined
     click_node = drag_node; // defining here
-    if (click_node != null) {
-        click_node.r = 1.5 * r;
-    }
+    nodePop(click_node);
     loadInfo();
-    update();
 }
 
 function hovered() {
@@ -348,10 +363,7 @@ function loadHighlightLinks(obj, category) {
 function loadInfo() {
     // UPDATE Info box
     if (click_node != null) {
-        // Style
-        info_box.style.display = "block";
-        info_box.style.top = 150 + click_node.y + "px";
-        //info_box.style.left = 80 + click_node.x + "px";
+        slideInfo();
 
 
         // TEXT
@@ -377,6 +389,7 @@ function loadInfo() {
         else src = images_path + "/Abbildungen/" + click_node.Grundriss + ".jpg";
         info_gru.src = src;
     }
-    else
-        info_box.style.display = "none";
+    else {
+        slideOutInfo();
+    }
 }
