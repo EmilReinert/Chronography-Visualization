@@ -7,30 +7,19 @@
 </head>
 <body>
     <h1>
-        Test Forced Network with Chronography Test Data
+        Chronography
     </h1>
-    <div>
-        <p>Test Funktions</p>
-        <label>
-            Color
-            <output id="center_XSliderOutput">0.5</output>
-            <input type="range" min="0" max="1" value=".5" step="0.01" oninput="d3.select('#center_XSliderOutput').text(value); testcolor = d3.interpolateSpectral(value); update();">
-        </label>
-        <label>
-            <button type="button" onclick="if (drawImages) drawImages = false; else drawImages = true;   update(); ">
-                Draw Images
-            </button>
-        </label>
-        <label>
-            <button type="button" onclick="if (drawNames) drawNames = false; else drawNames = true;   update(); ">
-                Draw Names
-            </button>
-        </label>
-    </div>
-
     <div class=" controls">
-        <p>Links</p>
 
+        <button type="button" onclick="changeMode('map');">
+            Map Mode
+        </button>
+        <button type="button" onclick="changeMode('network');">
+            Network Mode
+        </button>
+        <button type="button" onclick="changeMode('time');">
+            Timeline Mode
+        </button>
         <table id="links">
             <tr>
                 <td>
@@ -54,17 +43,39 @@
 
             </tr>
         </table>
-
+        <br />
 
     </div>
+    <!--div>
+        <p>Test Funktions</p>
+        <label>
+            Color
+            <output id="center_XSliderOutput">0.5</output>
+            <input type="range" min="0" max="1" value=".5" step="0.01" oninput="d3.select('#center_XSliderOutput').text(value); testcolor = d3.interpolateSpectral(value); update();">
+        </label>
+        <label>
+            <button type="button" onclick="if (drawImages) drawImages = false; else drawImages = true;   update(); ">
+                Draw Images
+            </button>
+        </label>
+        <label>
+            <button type="button" onclick="if (drawNames) drawNames = false; else drawNames = true;   update(); ">
+                Draw Names
+            </button>
+        </label>
+    </div-->
 
-    <form onsubmit="loadSearchNodes(document.getElementById('search_nodes').value); return false;">
+
+
+    <form id="searchbar" onsubmit="loadSearchNodes(document.getElementById('search_nodes').value); return false;">
         <input id="search_nodes">
         <input type="submit" value="Search">
     </form>
 
 
     <canvas id="network" width="1200" height="600"></canvas>
+    <canvas id="timeline"  width="1200" height="50"></canvas>
+
     <div id="infotitle" title="Specific information for selected item listed below">Information</div>
 
     <table id="infobox">
@@ -85,42 +96,41 @@
                     default
                 </p>
             </td>
+
+
             <td id="subtitles">
-                Standort
+
+                <button onclick="if (S) S = false; else S = true; loadLinks(); "> Standort </button>
                 <div>
                     <button id="S" onclick=" loadHighlightLinks(info_s, 'Standort' ); ">
                         default
                     </button>
                 </div>
-                Land
+                <button onclick="if (L) L = false; else L = true; loadLinks(); "> Land </button>
                 <div>
                     <button id="L" onclick=" loadHighlightLinks(info_l, 'Land' ); ">
                         default
                     </button>
                 </div>
-
-                ArchitektInn(Nachname)
+                <button onclick="if (A) A = false; else A = true; loadLinks(); "> Architekt 1 Nachname</button>
                 <div>
                     <button id="A" onclick=" loadHighlightLinks(info_a, 'A1Nachname' ); ">
                         default
                     </button>
                 </div>
-
-                Künstler
+                <button onclick="if (K) K = false; else K = true; loadLinks();"> Künstler 1</button>
                 <div>
                     <button id="K" onclick=" loadHighlightLinks(info_k, 'K1' ); ">
                         default
                     </button>
                 </div>
-
-                Entwurfsjahr
+                <button onclick="if (JE) JE = false; else JE = true; loadLinks(); "> Entwurfsjahr </button>
                 <div>
                     <button id="JE" onclick=" loadHighlightLinks(info_je, 'JahrEntwurf' ); ">
                         default
                     </button>
                 </div>
-
-                Fertigstellungsjahr
+                <button onclick="if (JF) JF = false; else JF = true; loadLinks(); "> Fertigstellungsjahr </button>
                 <div>
                     <button id="JF" onclick=" loadHighlightLinks(info_jf, 'JahrFertigstellung' ); ">
                         default
@@ -130,9 +140,6 @@
             </td>
         </tr>
     </table>
-    <div id="networkTitle">
-        Forced Network Nodes
-    </div>
 
     <!--a href="" FOLDER="https://webspeicher.in.uni-weimar.de/fs/home/m/s/xinu3159/">Emil's Verzeichnis</a-->
     <!-- DATA-->

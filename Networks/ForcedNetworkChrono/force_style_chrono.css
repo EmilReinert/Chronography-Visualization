@@ -3,19 +3,29 @@ body {
     color: #000 !important;
     font-family: Arial !important;
 }
-
+h1{
+    margin-left: 0px;
+}
 canvas {
+    margin-left: 20px;
 }
 
 
 
 .controls {
     width: 1200px;
-    background-color: #eee;
+    background: none;/* #dbdbdb;*/
+}
+
+.controls button{
+    position: center;
+}
+#links{
+    display:none;
 }
 
 form {
-    margin-top:10px;
+    margin-top:0px;
 }
 /*INFOBOX*/
 #infotitle {
@@ -23,8 +33,11 @@ form {
 }
 
 #infobox {
+    top: 50px;
+    position: absolute;
+    background-color:rgba(107, 107, 107, 0.89); /*#86d1b7;*/
+    display: none;
     width: 1200px;
-    left: 50%;
     font-weight: bold;
     font-size: small;
     border-radius: 100px;
@@ -55,17 +68,20 @@ form {
 }
 
 #subtitles {
-    font-weight: bold;
 }
 
     #subtitles button {
-        font-weight: normal;
+        font-weight: bold;
         background: none !important;
         border: none;
         /*optional*/
         font-family: arial, sans-serif;
         /*input has OS specific font-family*/
         cursor: pointer;
+    }
+    #subtitles div button {
+        margin-left:10px;
+        font-weight: normal;
     }
 
         #subtitles button:hover {
@@ -74,11 +90,10 @@ form {
 
 
 /*OTHER*/
-#networkTitle {
+#searchbar{
     position: absolute;
-    top: 300px;
-    left: 30px;
-    width: 100%;
+    top: 140px;
+    left: 20px;
 }
 
 
