@@ -34,26 +34,21 @@ function defineImages(amount, path) {
     return images;
 }
 
+function  updateNodes(new_nodes) {
+    simulation
+        .nodes(new_nodes);
+    active_items = new_nodes;
+}
+
 function impulse(strength) {
     // sends force impulse to simulation
     simulation.alpha(strength).restart();
 }
 
-function resetSimulation() {
-
-}
-
-function resetRadiuses() {
-    // gives all items a radius element or set it to r
-    // r -> initial defined radius 
-    for (i = 0; i < table_length; i++) {
-        chrono_data.items[i]["r"] = r;
-    }
-}
 
 function resetClickLinks() {
     if (click_content != null) click_content.style.color = 'black';
-    simulation.force("link").links(link_container);
+    simulation.force("link").links(active_links);
     search_nodes = [];
     search_links = [];
 }
@@ -74,14 +69,14 @@ function searchItems(content, category) {
     // searches all given items for specific content of given category
     // and returns 'Number' array of matching items
     numbers = [];
-    for ( i = 0; i < table_length; i++) {
-        if (chrono_data.items[i][category] == undefined) {
+    for (i = 0; i < active_items.length; i++) {
+        if (active_items[i][category] == undefined) {
             alert("category dont exist");
         }
         // look if substring content is contained
         // alert("does "+ chrono_data.items[i][category] + " include " + content);
-        if (included(chrono_data.items[i][category],content)) {
-            numbers.push(chrono_data.items[i].Nummer);
+        if (included(active_items[i][category],content)) {
+            numbers.push(active_items[i].Nummer);
         }
     }
     return numbers;
@@ -91,15 +86,15 @@ function searchAllItems(content) {
     // iteraties over all categories 
     // and returns 'Nummer' of element
     num = [];
-    for (i = 0; i < table_length; i++) {
+    for (i = 0; i < active_items.length; i++) {
         for (c = 0; c < attributes.length; c++) {
-            if (chrono_data.items[i][attributes[c]] == undefined) {
+            if (active_items[i][attributes[c]] == undefined) {
                 alert("category dont exist");
             }
             // look if substring content is contained
             // alert("does "+ chrono_data.items[i][category] + " include " + content);
-            if (included(chrono_data.items[i][attributes[c]],content)) {
-                num.push(chrono_data.items[i].Nummer);
+            if (included(active_items[i][attributes[c]],content)) {
+                num.push(active_items[i].Nummer);
             }
         }
     }
@@ -107,19 +102,9 @@ function searchAllItems(content) {
 }
 
 
-function makeSearchLinks(numbers) { // not in use
-    // searches all given data for same content and returns as links
-    links = [];
-    // makes links out of all numbers with same content 
-    for (i = 0; i < numbers.length; i++) {
-        links.push(makeLink(click_node.Nummer, numbers[i]));
-    }
-    return links;
-}
-
-
 
 // GENERAL
+
 function readTxt(path) {
     // reads txt file content from given file path
     var text = "";

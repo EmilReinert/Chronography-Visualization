@@ -8,8 +8,9 @@ h1 {
     padding: 2px;
     padding-left: 10px;
     color: white;
-    background-color: #86d1b7;
+    background-color: rgba(107, 107, 107, 0.89);
     border-radius: 10px;
+    z-index: -1;
 }
 #searchbar {
     padding: 2px;
@@ -27,12 +28,7 @@ h1 {
     }
 
 canvas {
-    margin: auto;
-    position: absolute;
-    top: 10%;
-    left: 0;
-    bottom: 0;
-    right: 0;
+    margin-top:-10px;
 }
 
 
@@ -72,12 +68,12 @@ form {
 }
 
 #infobox {
-    position:absolute;
-    top:1000px;
-    left:10%;
+    position: absolute;
+    top: 1000px;
+    left: 10%;
     background-color: rgba(107, 107, 107, 0.89); /*#86d1b7;*/
     display: none;
-    width:80%;
+    width: 80%;
     font-weight: bold;
     font-size: small;
     border-radius: 100px;

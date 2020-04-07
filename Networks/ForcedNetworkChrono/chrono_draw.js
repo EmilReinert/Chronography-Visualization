@@ -1,12 +1,12 @@
 // DRAWING FUNCTIONS and ANIMATIONS
 
 // general c = context
-function drawCircle(c, d, color ) {
+function drawCircle(c, x,y , color ) {
     c.beginPath();
     c.fillStyle = color;
     c.globalAlpha = 1;
-    c.moveTo(d.x, d.y);
-    c.arc(d.x, d.y, r, 0, 2 * Math.PI);
+    c.moveTo(x, y);
+    c.arc(x, y, r, 0, 2 * Math.PI);
     c.fill();
 }
 
@@ -180,9 +180,11 @@ function slideInfo() {
 
     if (mode == "time")
         endpos = 450;
-    var fs = (endpos - pos) * 0.05;
-    if (fs < 1) {
-        info_box.style.top = endpos + "px"; return;
+    var fs = (endpos - pos) * 0.05; console.log(fs);
+    if (Math.abs(fs) < 1) {
+        clearInterval(id);
+        info_box.style.top = endpos + "px";
+        return;
     }
     var id = setInterval(frame, 1);
     function frame() {
@@ -198,8 +200,13 @@ function slideInfo() {
 
 function slideOutInfo() {
     var pos = parseInt(info_box.getBoundingClientRect().top, 10);// start position
-    var endpos = 3 * height; 
+    var endpos = 2 * height; 
     var fs = (endpos - pos) * 0.05;
+    if (Math.abs(fs) < 1) {
+        clearInterval(id);
+        info_box.style.display = "none";
+        return;
+    }
     var id = setInterval(frame, 1);
     function frame() {
         if (pos >= endpos) {
@@ -223,11 +230,38 @@ function nodePop(d) {
     function frame() {
         if (radius >= 1.5) {
             clearInterval(id);
-            drawNode(d, highlightcolor, 1.5 * r)
+            drawNode(d, highlightcolor, 1.5 * r);
             update();
         } else {
-            drawNode(d,highlightcolor, r*radius)
+            drawNode(d, highlightcolor, r * radius);
             radius += 0.1;
         }
     }
+}
+
+function zoomMap() {
+    var zoom = 1;
+    x = getMouseCanvasPos().x;
+    y = getMouseCanvasPos().y;
+    var id = setInterval(frame, 10);
+    function frame() {
+        if (zoom >= 1.05) {
+            clearInterval(id);
+            console.log("zoomed");
+            loadMapNodes();
+            changeMode("network");
+            r = 30;
+            simulation
+                .force("collide", d3.forceCollide(r * collisionFactor))
+        } else {
+            ctx.translate(-x * 0.05, -y * 0.05);
+            ctx.scale(1.05, 1.05);
+            zoom += 0.001;
+            r = r-0.15*zoom;
+            update();
+            drawCircle(ctx, x, y, "red");
+        }
+    }
+
+
 }
