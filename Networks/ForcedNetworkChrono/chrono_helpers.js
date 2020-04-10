@@ -69,14 +69,14 @@ function searchItems(content, category) {
     // searches all given items for specific content of given category
     // and returns 'Number' array of matching items
     numbers = [];
-    for (i = 0; i < active_items.length; i++) {
-        if (active_items[i][category] == undefined) {
+    for (j = 0; j < active_items.length; j++) {
+        if (active_items[j][category] == undefined) {
             alert("category dont exist");
         }
         // look if substring content is contained
         // alert("does "+ chrono_data.items[i][category] + " include " + content);
-        if (included(active_items[i][category],content)) {
-            numbers.push(active_items[i].Nummer);
+        if (included(active_items[j][category],content)) {
+            numbers.push(active_items[j].Nummer);
         }
     }
     return numbers;
@@ -101,6 +101,15 @@ function searchAllItems(content) {
     return num;
 }
 
+function makeSearchLinks(numbers) { // not in use
+    // searches all given data for same content and returns as links
+    links = [];
+    // makes links out of all numbers with same content 
+    for (i = 0; i < numbers.length; i++) {
+        links.push(makeLink(click_node.Nummer, numbers[i]));
+    }
+    return links;
+}
 
 
 // GENERAL
@@ -165,7 +174,7 @@ function getDistance(a, b) {
 }
 
 // DRAG EVENTS
-draggable = true;
+draggable = true; // objects can be dragged but only when mouse clicked onto it
 function dragsubject() {
     return simulation.find(d3.event.x, d3.event.y);
 }
@@ -182,11 +191,13 @@ function dragstarted() {
     }
     if (click_node == d3.event.subject) { drag_node = null; } //unselect click node when double click
     else { drag_node = d3.event.subject; }//select
+    if (!drag) return;
     d3.event.subject.fx = d3.event.subject.x;
     d3.event.subject.fy = d3.event.subject.y;
 }
 
 function dragged() {
+    if (!drag) return;
     if (!draggable) return;
     if (d3.event.active)
         if (forcing)
@@ -197,6 +208,7 @@ function dragged() {
 }
 
 function dragended() {
+    if (!drag) return;
     if (!draggable) return;
     if (!d3.event.active) simulation.alphaTarget(0);
     d3.event.subject.fx = null;
@@ -204,3 +216,95 @@ function dragended() {
     
 }
 
+
+/// ZOOM
+
+function zoomTime(direction) {
+    //zoom in
+    x = getMouseCanvasPos().x;
+    y = getMouseCanvasPos().y;
+    var span = temp_end - temp_start; 
+    var zoom_strength = span /3;
+
+    var relativeX = (x - offset) / (w - 2 * offset); //relative mouse value on timeline
+
+    if (relativeX < 0) relativeX = 0;
+    if (relativeX > 1) relativeX = 1;
+
+
+    zoomyear = Math.round(temp_start + relativeX * span);
+    end_holder = temp_end;
+    start_holder = temp_start;
+    if (direction == "down") { // zoom in
+        temp_end -= (1-relativeX) * zoom_strength;
+        temp_start += relativeX * zoom_strength;
+    }
+    //zoom out
+    else {
+        temp_end += (1 - relativeX) * 2*zoom_strength;
+        temp_start -= relativeX * 2*zoom_strength;
+    }
+
+
+    span = temp_end - temp_start;
+    if (span <= 0.5 * (end - start)) {
+        yearstep = 5;
+        if (span <= 0.2 * (end - start))
+            yearstep = 2;
+        if (span <= 0.1 * (end - start))
+            yearstep = 1;
+    }
+    else yearstep = 10;
+    if (span <= 0.05 * (end - start)) {
+        temp_end = end_holder;
+        temp_start = start_holder;
+    }
+    initTimeline();
+}
+
+
+// Zoom Actions
+
+function zoomMap() {
+    var zoom = 1;
+    x = getMouseCanvasPos().x;
+    y = getMouseCanvasPos().y;
+    var id = setInterval(frame, 10);
+    function frame() {
+        if (zoom >= 1.05) {
+            clearInterval(id);
+            loadMapNodes();
+            changeMode("network");
+            r = 30;
+            simulation
+                .force("collide", d3.forceCollide(r * collisionFactor))
+        } else {
+            ctx.translate(-x * 0.05, -y * 0.05);
+            ctx.scale(1.05, 1.05);
+            zoom += 0.001;
+            r = r - 0.15 * zoom;
+            update();
+        }
+    }
+}
+function unZoomMap() {
+    var zoom = 1.05;
+    changeMode("map");
+    x = 600;
+    y = 200;
+    ctx.translate(-x * 2.5, -y * 2.5);
+    ctx.scale(30, 30);
+    var id = setInterval(frame, 10);
+    function frame() {
+        if (zoom <= 1) {
+            clearInterval(id);
+            changeMode("map");
+        } else {
+            ctx.scale(0.95, 0.95);
+            ctx.translate(x * 0.05, y * 0.05);
+            zoom -= 0.001;
+            r = r - 0.15 * zoom;
+            update();
+        }
+    }
+}

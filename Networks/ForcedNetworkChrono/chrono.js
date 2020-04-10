@@ -20,7 +20,7 @@ var info_abb = document.getElementById("abb"),
 var network = document.getElementById("network"); //HTML canvas
 var timeline = document.getElementById("timeline");
 network.width = window.innerWidth;//*0.9;
-network.height = window.innerHeight*0.9;
+network.height = window.innerHeight;
 timeline.width = window.innerWidth;
 var canvas = d3.select("#network"); // D3 activated canvas = SVG
 var infoItems = document.getElementById("infobox").rows.item(0).cells;
@@ -38,12 +38,12 @@ var images_path = "../../Data/Images";
 var text_path = "../../Data/Beschreibungstexte";
 var testcolor = '#86d1b7';
 var highlightcolor = 'black';
-var r = 20;
+var r = 20, rw = 2;
 var center_force = 180;
 var collisionFactor = 1.2;
 var color = d3.scaleOrdinal(d3.schemeCategory10);
 var testImage = makeImage("../../Data/Images/blue.jpg", 100, 100, "na");
-var mapImage = makeImage("../../Data/Images/map.png", 1200,600, "map");
+var mapImage = makeImage("../../Data/Images/map.svg", 1200,600, "map");
 var positions = { "upleft": { "x": 300, "y": 150 }, "upright": { "x": 900, "y": 150 }, "lowleft": { "x": 300, "y": 450 }, "lowright": { "x": 900, "y": 450 } }; // testpositions
 
 var map = {
@@ -73,17 +73,17 @@ var map = {
     "Volksrepublik China": { "x": 907, "y": 262 }
 };
 //for timeline
+var timesteps = []; // holder for dates and steps of timeline
 var h = timeline.height;
 var w = timeline.width;
-var offset = 20; // offset on both ends
-var start = 1750;
-var end = 2020;
-var step = (w - 2 * offset) * 10 / (end - start); // 10 years steps
+var offset = 50; // offset on both ends
+var start = temp_start = 1750;
+var end = temp_end = 2020.4;
 
 
 // Variables
 var mode = "map";
-var forcing = true;
+var forcing = true; drag = true;
 var hover_node, drag_node, click_node; var click_content; // content html of click node to reset
 var active_links = []; // init from html
 var search_nodes = []; // init from html
@@ -120,7 +120,7 @@ var simulation = d3.forceSimulation()
         .id(function (d) { return d.Nummer; }));
 
 simulation
-    .nodes(chrono_data.items)
+    .nodes(active_items)
     .on("tick", update)
     .force("link")
 
@@ -136,56 +136,62 @@ canvas // = SVG
         .on("end", dragended))
     .on("click", clicked)
     .on('mousemove', function () { // HOVER!!!
-        //hovered();
+        hovered();
     })
     .on("wheel", function (d) {
         var direction = d3.event.deltaY < 0 ? 'down' : 'up'; //down = zoomin
         scroll(direction);
     });
 
-changeMode("map");
+changeMode("time");
+setTimeout(function () { update(); }, 1000);
 
 function changeMode(m) {
     //called once when changing modes
     previous = mode;
     mode = m;
     timeline.style.display = "none";
-    document.getElementById("network").height = height = window.innerHeight*0.9;
+    document.getElementById("network").height = height = window.innerHeight*0.93;
 
     if (mode == "network") {
+        forcing = true;
         r = 20;
         if (previous == "map")
             impulse(0.2);
         else
             impulse(1);
-        forcing = true;
         simulation
             .force("collide", d3.forceCollide(r * collisionFactor))
             .force("charge", d3.forceManyBody()// forces between nodes
                 .strength(-center_force));
     }
     if (mode == "map") {
+        drag = true;
+        zoom = false;
+        forcing = false;
+        updateNodes(chrono_data.items);
         r = 10;
         simulation.stop();
         simulation
             .force("collide", d3.forceCollide(0))
             .force("charge", d3.forceManyBody()// forces between nodes
                 .strength(0));
-        forcing = false;
         initMap(); // called once!
-        setTimeout(function () { update(); }, 100);
     }
     if (mode == "time") {
+        //drag = false;
+        forcing = false;
+        updateNodes(chrono_data.items);
         r = 20;
         simulation.stop();
         simulation
             .force("collide", d3.forceCollide(0))
             .force("charge", d3.forceManyBody()// forces between nodes
                 .strength(0));
-        forcing = false;
         initTimeline();
     }
     update();
+    loadInfo();
 }
 
 
@@ -195,26 +201,46 @@ function initMap() {
     for (i = 0; i < table_length; i++) {
         if (map[chrono_data.items[i].Land] == undefined) pos.x = pos.y = 0;
         else pos = map[chrono_data.items[i].Land];
-        chrono_data.items[i].x = width*0.00084*pos.x;// + i * 0.1 * Math.random();
-        chrono_data.items[i].y = height * 0.00168*pos.y - 1.7 * r;//+ i * 0.1 * Math.random();
+        chrono_data.items[i].x = width*0.00083*pos.x + i * 0.1 * Math.random();
+        chrono_data.items[i].y = height * 0.00168*pos.y - 1.7 * r+ i * 0.1 * Math.random();
     }
 
 }
 
 function initTimeline() {
     // initializing time mode
-    document.getElementById("network").height = 300; height = 300;
     timeline.style.display = "block";
+
     drawTimeLine(ctime);
     // todo node behaviours also in "changeMode"
-    var pos; //year position on ray
-    for (i = 0; i < table_length; i++) {
-        if (chrono_data.items[i].JahrFertigstellung == "") pos = 0;
-        else 
-            pos = offset + (step / 10) * (parseInt(chrono_data.items[i].JahrFertigstellung) - start);
-        chrono_data.items[i].x = pos; //+  0.1 * Math.random();
-        chrono_data.items[i].y = height- 1.7 * r;
+    var sameNodes = [];
+
+    if (temp_end > end) temp_end = end;
+    if (temp_start < start) temp_start = start;
+    
+    var span = temp_end - temp_start; //total time span in given timeline
+    rw = 500 / span;
+    if (rw > r) rw = r;
+    // all positions are determined relative to time span
+    var year;
+    for (i = 0; i < active_items.length; i++) {
+        active_items[i].x = -20;
+        active_items[i].y = height/2 -3*r;
+        // determine X
+        if (active_items[i].JahrFertigstellung == "") continue; 
+        year = parseInt(active_items[i].JahrFertigstellung);
+        if (year > temp_end || year < temp_start) continue;
         
+        active_items[i].x = offset + (w - 2 * offset) * ((year - temp_start) / span);
+
+        // determine Y
+        sameNodes= searchItems(active_items[i].JahrFertigstellung, "JahrFertigstellung");
+        var num = 0;
+        if (sameNodes.length > 1) {// action if theres several nodes for one year
+            num = i + 1;
+            active_items[i].y -= (sameNodes.indexOf(num.toString()) * 3 * r);
+        }
+      
     }
 
 }
@@ -223,29 +249,31 @@ function initTimeline() {
 // UPDATE
 function update() {
     // catch out of bounds nodes
-    for (i = 0; i < active_items.length; i++) {
-        if (active_items[i].x < 0 + r)
-            active_items[i].x = 0 + r;
-        if (active_items[i].x > width - r)
-            active_items[i].x = width - r;
-        if (active_items[i].y < 0 + r)
-            active_items[i].y = 0 + r;
-        if (active_items[i].y > height - r)
-            active_items[i].y = height - r;
-    }
+    if (drag)  // limit only when dragging is allowed
+        for (i = 0; i < active_items.length; i++) {
+            if (active_items[i].x < 0 + r)
+                active_items[i].x = 0 + r;
+            if (active_items[i].x > width - r)
+                active_items[i].x = width - r;
+            if (active_items[i].y < 0 + r)
+                active_items[i].y = 0 + r;
+            if (active_items[i].y > height - r)
+                active_items[i].y = height - r;
+        }
 
     // drawing Modes
+    ctx.clearRect(0, 0, width, height);
     if (mode == "network") {
-        ctx.clearRect(0, 0, width, height);
+        drawRect(ctx, 0, 0, width, height, "#dbdbdb");
         updateView(drawNode, testcolor);
     }
     if (mode == "map") {
-        ctx.drawImage(mapImage, 0, 0, width, height);
+        ctx.drawImage(mapImage,0, 10, width, height);
         updateView(drawPin,"grey");
     }
     if (mode == "time") {
-        ctx.clearRect(0, 0, width, height);
-        updateView(drawPin, "grey");
+        drawTimeLine(ctime);
+        updateView(drawImage, "grey");
     }
 }
 
@@ -254,27 +282,43 @@ function updateView(f, color) {
     // draw ALL links in container
     for (i = 0; i < active_links.length; i++)
         drawLink(active_links[i]);
-
+    /*
     for (i= 0; i < search_links.length; i++) {
         drawLink(search_links[i], highlightcolor);
     }
+    */
 
+    if (click_node != null)
+        drawRect(ctx, 0, 0, width, height, 'white', 0.7);
 
     for (i = 0; i < active_items.length; i++) {
         if (active_items[i] == click_node) { continue;}
         if (search_nodes.includes(active_items[i].Nummer))
             f(active_items[i], highlightcolor); // highlight selected nodes
-        else
-            f(active_items[i], color);
+        else {
+            if (click_node != null)
+                f(active_items[i], color, 0.5);
+            else
+                f(active_items[i], color, 1);
+
+        }
        //DRAWING IMAGE NODES
         
     }
+    //hover node
+    if (hover_node != null) {
+        drawHighlight(hover_node, highlightcolor,0.5, 1.5 * r);
+        drawNodeImageRound(hover_node, "",0.5, 1.5 * r);//DRAWING IMAGE NODES
+    }
+
+
 
     // draw click node last
     if (click_node != null) {
-        drawHighlight(click_node, highlightcolor, 1.5 * r);
-        drawNodeImageRound(click_node, 1.5 * r);//DRAWING IMAGE NODES
+        drawHighlight(click_node, highlightcolor,1, 1.5 * r);
+        drawNodeImageRound(click_node,"",1, 1.5 * r);//DRAWING IMAGE NODES
     }
+
     //loadInfo();
 }
 
@@ -283,7 +327,6 @@ function updateView(f, color) {
 
 function clicked() {
     // consists of animations and transitions
-    simulation.stop();
     resetClickLinks();
     // Click node Action and Info
     // only if it is defined
@@ -293,7 +336,16 @@ function clicked() {
 }
 
 function hovered() {
-    hover_node = simulation.find(d3.event.x, d3.event.y);
+    x = getMouseCanvasPos().x;
+    y = getMouseCanvasPos().y;
+    hover_node = simulation.find(x, y);
+    if (getDistance(hover_node, getMouseCanvasPos()) > r * 1.2) {
+        hover_node = null;
+        document.getElementById("network").style.cursor = "default";
+    }
+    else
+        document.getElementById("network").style.cursor = "pointer";
+
     update();
 }
 
@@ -359,10 +411,12 @@ function loadHighlightLinks(obj, category) {
 }
 
 function loadInfo() {
+    //info_box.style.backgroundColor = "rgba(134, 209, 183, 0.89)";
     // UPDATE Info box
     if (click_node != null) {
         slideInfo();
 
+        simulation.stop();
 
         // TEXT
         loadInner(info_name, click_node.Nummer + " " + click_node.Bezeichnung);
@@ -389,6 +443,23 @@ function loadInfo() {
     }
     else {
         slideOutInfo();
+        if (mode == "network")
+            impulse(0.1);
+        update();
+    }
+}
+
+expand = false;
+function bigInfo() {
+    if (!expand) {
+        turnArrow(1);
+        slideInfo(0);
+        expand = true;
+    }
+    else {
+        turnArrow(-1);
+        slideInfo();
+        expand = false;
     }
 }
 
@@ -402,18 +473,23 @@ function loadMapNodes() {
     }
     updateNodes(map_nodes);
 }
-
+zoom_map = false;
 function scroll(direction) {
-    if (mode == "map") {
+    if (mode == "map" && !zoom_map) {
         if (direction == "down") {
+            zoom_map = true;
             zoomMap();
         }// todo reset?
     }
-    if (mode == "network") {
+    if (mode == "network" && zoom_map) {
         if (direction == "up") {
+            zoom_map = false;
             updateNodes(chrono_data.items);
             changeMode("map");
         }
+    }
+    if (mode == "time") {
+        zoomTime(direction);
     }
     update();
 }

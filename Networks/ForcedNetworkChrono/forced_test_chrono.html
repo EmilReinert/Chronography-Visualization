@@ -8,28 +8,8 @@
 <body>
     <h1 id="title">
         Chronography
+        <span>der Architektur</span>
     </h1>
-
-    <!--div>
-        <p>Test Funktions</p>
-        <label>
-            Color
-            <output id="center_XSliderOutput">0.5</output>
-            <input type="range" min="0" max="1" value=".5" step="0.01" oninput="d3.select('#center_XSliderOutput').text(value); testcolor = d3.interpolateSpectral(value); update();">
-        </label>
-        <label>
-            <button type="button" onclick="if (drawImages) drawImages = false; else drawImages = true;   update(); ">
-                Draw Images
-            </button>
-        </label>
-        <label>
-            <button type="button" onclick="if (drawNames) drawNames = false; else drawNames = true;   update(); ">
-                Draw Names
-            </button>
-        </label>
-    </div-->
-
-
 
     <form id="searchbar" onsubmit="loadSearchNodes(document.getElementById('search_nodes').value); return false;">
         <input id="search_nodes">
@@ -64,7 +44,8 @@
         <button class="tag"> tagXYZ</button>
     </div>
 
-    <canvas id="network" width="1200" height="800" style="cursor: pointer;"></canvas>
+    <canvas id="network" width="1200" height="800" ></canvas>
+
     <canvas id="timeline" width="1200" height="50"></canvas>
 
 
@@ -72,6 +53,12 @@
     <div id="infotitle" title="Specific information for selected item listed below">Information</div>
 
     <table id="infobox">
+        <caption>
+            <form id="infoarrow" onsubmit="bigInfo(); return false;">
+                <input type="image" src="../../Data/Images/arrow_white.png" alt="info_arrow" width="20" height="10" />
+            </form>
+        </caption>
+
         <tr>
             <td>
                 <img id="abb" src="../../Data/Images/blue.jpg" width="200" height="200" />
@@ -139,9 +126,10 @@
         <button type="button" onclick="changeMode('map');">
             Map Mode
         </button>
-        <button type="button" onclick="changeMode('network');">
+        <!--button type="button" onclick="changeMode('network');
+        updateNodes(chrono_data.items);">
             Network Mode
-        </button>
+        </button-->
         <button type="button" onclick="changeMode('time');">
             Timeline Mode
         </button>
@@ -175,7 +163,7 @@
     <!--a href="" FOLDER="https://webspeicher.in.uni-weimar.de/fs/home/m/s/xinu3159/">Emil's Verzeichnis</a-->
     <!-- DATA-->
     <script type="text/javascript" src="../../Data/TableData/chronodata.json"></script>
-    <script src="https://d3js.org/d3.v5.min.js">
+    <script src="../../library/d3.v5.min.js">
     </script>
     <script src="chrono_draw.js"></script>
     <script src="chrono_helpers.js"></script>

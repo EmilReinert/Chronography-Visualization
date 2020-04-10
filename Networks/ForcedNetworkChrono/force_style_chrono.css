@@ -1,21 +1,25 @@
+
 body {
     font-size: 1em !important;
     color: #000 !important;
     font-family: Arial !important;
     overflow:hidden;
 }
-h1 {
-    padding: 2px;
-    padding-left: 10px;
+#title {
     color: white;
-    background-color: rgba(107, 107, 107, 0.89);
-    border-radius: 10px;
-    z-index: -1;
-}
+        font-size: 25px;
+        padding: 2px;
+        padding-left: 10px;
+        background-color: rgba(107, 107, 107, 0.89);
+        border-radius: 10px;
+    }
+    #title span {
+        font-size: 20px;
+    }
 #searchbar {
-    padding: 2px;
+    padding: 3px;
     position: absolute;
-    top: 30px;
+    top: 20px;
     right: 30px;
 }
 
@@ -27,10 +31,14 @@ h1 {
     #searchbar #search_nodes {
     }
 
-canvas {
+#network {
+    margin-left: -10px;
     margin-top:-10px;
 }
-
+#timeline {
+    position: absolute;
+    top: 50%;
+}
 
 
 .controls {
@@ -68,15 +76,17 @@ form {
 }
 
 #infobox {
+    clip-path: polygon(50% 5%, 0% 100%, 100% 100%);
     position: absolute;
     top: 1000px;
-    left: 10%;
-    background-color: rgba(107, 107, 107, 0.89); /*#86d1b7;*/
+    left: 0%;
+    background-color: rgba(134, 209, 183, 0.89); /* rgba(107, 107, 107, 0.89); #86d1b7;*/
     display: none;
-    width: 80%;
+    width: 100%;
+    height: 200%;
     font-weight: bold;
     font-size: small;
-    border-radius: 100px;
+    border-radius: 50px;
 }
 
     #infobox img {
@@ -87,6 +97,18 @@ form {
         margin-right: auto;
         position: relative;
         overflow: hidden;
+    }
+
+    #infobox tr{
+    }
+    #infobox > * {
+        margin-top: 10px;
+        position: relative;
+    }
+    #infobox form {
+        margin-top: -5px;
+        position: absolute;
+        left: 50%;
     }
 
 #abb {
